@@ -7,8 +7,24 @@
   <meta name="description" content="Portfólio pessoal de Daivisson, com imagens, ideias e projetos.">
   <title>Daivisson — Portfólio</title>
   <script>
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let motionPreference = null;
+
     try {
-      if (sessionStorage.getItem("daivisson-intro-seen") || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      motionPreference = localStorage.getItem("daivisson-motion-preference");
+    } catch (error) {
+      console.error("Não foi possível ler a preferência de animação.", error);
+    }
+
+    window.daivissonReduceMotion = motionPreference === "reduced"
+      || (motionPreference !== "full" && reducedMotionQuery.matches);
+
+    if (motionPreference === "full") {
+      document.documentElement.classList.add("motion-enabled");
+    }
+
+    try {
+      if (sessionStorage.getItem("daivisson-intro-seen") || window.daivissonReduceMotion) {
         document.documentElement.classList.remove("intro-pending");
       } else {
         sessionStorage.setItem("daivisson-intro-seen", "true");
@@ -212,6 +228,25 @@
 
     .menu-toggle:hover,
     .menu-toggle:focus-visible {
+      border-color: rgba(255, 255, 255, .34);
+      background: rgba(22, 31, 51, .92);
+    }
+
+    .motion-toggle {
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(9, 13, 25, .76);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 650;
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .motion-toggle:hover,
+    .motion-toggle:focus-visible {
       border-color: rgba(255, 255, 255, .34);
       background: rgba(22, 31, 51, .92);
     }
@@ -3089,66 +3124,66 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
+      html:not(.motion-enabled) *,
+      html:not(.motion-enabled) *::before,
+      html:not(.motion-enabled) *::after {
         scroll-behavior: auto !important;
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
       }
 
-      .reveal {
+      html:not(.motion-enabled) .reveal {
         opacity: 1;
         transform: none;
       }
 
-      .gallery-card.reveal,
-      .gallery-card.reveal.is-visible {
+      html:not(.motion-enabled) .gallery-card.reveal,
+      html:not(.motion-enabled) .gallery-card.reveal.is-visible {
         transform: none;
       }
 
-      .skills-grid .skill-card.reveal,
-      .skills-grid .skill-card.reveal.is-visible,
-      .certificate-card.reveal,
-      .certificate-card.reveal.is-visible {
+      html:not(.motion-enabled) .skills-grid .skill-card.reveal,
+      html:not(.motion-enabled) .skills-grid .skill-card.reveal.is-visible,
+      html:not(.motion-enabled) .certificate-card.reveal,
+      html:not(.motion-enabled) .certificate-card.reveal.is-visible {
         transform: none;
       }
 
-      .voxel,
-      .minecraft-tree,
-      .hero-sword,
-      .about-sword,
-      .about-photo-orbit,
-      .hero-block-one,
-      .hero-block-two,
-      .about-torch::before,
-      .about-torch::after,
-      .contact-block-left,
-      .contact-block-left-small,
-      .contact-block-right,
-      .contact-torch::before,
-      .scroll-progress span {
+      html:not(.motion-enabled) .voxel,
+      html:not(.motion-enabled) .minecraft-tree,
+      html:not(.motion-enabled) .hero-sword,
+      html:not(.motion-enabled) .about-sword,
+      html:not(.motion-enabled) .about-photo-orbit,
+      html:not(.motion-enabled) .hero-block-one,
+      html:not(.motion-enabled) .hero-block-two,
+      html:not(.motion-enabled) .about-torch::before,
+      html:not(.motion-enabled) .about-torch::after,
+      html:not(.motion-enabled) .contact-block-left,
+      html:not(.motion-enabled) .contact-block-left-small,
+      html:not(.motion-enabled) .contact-block-right,
+      html:not(.motion-enabled) .contact-torch::before,
+      html:not(.motion-enabled) .scroll-progress span {
         animation: none;
       }
 
-      .skill-list li {
+      html:not(.motion-enabled) .skill-list li {
         opacity: 1;
       }
 
-      .scroll-progress span {
+      html:not(.motion-enabled) .scroll-progress span {
         will-change: auto;
       }
 
-      .intro-pending .intro-screen {
+      html:not(.motion-enabled).intro-pending .intro-screen {
         visibility: hidden;
         pointer-events: none;
         animation: none;
       }
 
-      .intro-pending .intro-title,
-      .intro-pending .intro-tagline,
-      .intro-pending .scroll-cue {
+      html:not(.motion-enabled).intro-pending .intro-title,
+      html:not(.motion-enabled).intro-pending .intro-tagline,
+      html:not(.motion-enabled).intro-pending .scroll-cue {
         animation: none;
       }
     }
@@ -3179,6 +3214,7 @@
       <a class="brand" href="#inicio" aria-label="DECKS, início">
         <span class="brand-name">DECKS</span>
       </a>
+      <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false">Reduzir animações</button>
       <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-links">
         <span aria-hidden="true">☰</span>
       </button>
@@ -3574,6 +3610,22 @@
 
     document.querySelector("#year").textContent = new Date().getFullYear();
 
+    const motionToggle = document.querySelector("#motion-toggle");
+    const reduceMotion = window.daivissonReduceMotion;
+    motionToggle.textContent = reduceMotion ? "Ativar animações" : "Reduzir animações";
+    motionToggle.setAttribute("aria-pressed", String(!reduceMotion));
+
+    motionToggle.addEventListener("click", () => {
+      const preference = reduceMotion ? "full" : "reduced";
+      try {
+        localStorage.setItem("daivisson-motion-preference", preference);
+      } catch (error) {
+        console.error("Não foi possível salvar a preferência de animação.", error);
+        return;
+      }
+      window.location.reload();
+    });
+
     const scrollProgress = document.querySelector(".scroll-progress span");
     let scrollUpdatePending = false;
 
@@ -3594,9 +3646,7 @@
     updateScrollProgress();
     window.addEventListener("scroll", requestScrollProgressUpdate, { passive: true });
     window.addEventListener("resize", requestScrollProgressUpdate, { passive: true });
-
     const revealItems = document.querySelectorAll(".reveal");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if ("IntersectionObserver" in window && !reduceMotion) {
       const revealObserver = new IntersectionObserver((entries, observer) => {
