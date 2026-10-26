@@ -234,9 +234,9 @@
       height: 100%;
       object-fit: cover;
       object-position: center 48%;
-      translate: var(--hero-x, 0px) var(--hero-y, 0px);
+      transform: translate(var(--hero-x, 0px), var(--hero-y, 0px));
       scale: 1.045;
-      transition: translate .45s cubic-bezier(.2, .7, .2, 1);
+      transition: transform .45s cubic-bezier(.2, .7, .2, 1);
       animation: image-arrive 1.4s cubic-bezier(.2, .7, .2, 1) both;
     }
 
@@ -725,8 +725,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 4px 22px rgba(4, 8, 18, .78));
-      translate: -50% 0;
-      transform: perspective(700px) rotateX(var(--name-rx, 0deg)) rotateY(var(--name-ry, 0deg)) translateZ(var(--name-z, 0px));
+      transform: translate(-50%, 0) perspective(700px) rotateX(var(--name-rx, 0deg)) rotateY(var(--name-ry, 0deg)) translateZ(var(--name-z, 0px));
       transform-style: preserve-3d;
       animation: name-rise 1.15s .25s cubic-bezier(.2, .75, .25, 1) both, title-light-sweep 8s 1.5s ease-in-out infinite;
     }
@@ -863,7 +862,7 @@
       line-height: 1;
       text-align: center;
       text-shadow: 0 4px 34px rgba(0, 0, 0, .8);
-      translate: -50% 0;
+      transform: translateX(-50%);
       animation: intro-title-arrive .9s .2s cubic-bezier(.2, .75, .25, 1) both;
     }
 
@@ -928,7 +927,7 @@
       letter-spacing: .2em;
       text-align: center;
       text-shadow: 0 2px 18px rgba(0, 0, 0, .85);
-      translate: -50% 0;
+      transform: translateX(-50%);
       animation: intro-tagline-arrive .8s .9s cubic-bezier(.2, .75, .25, 1) both;
     }
 
@@ -2372,13 +2371,13 @@
     }
 
     @keyframes name-rise {
-      from { opacity: 0; translate: -50% 48px; transform: perspective(700px) rotateX(35deg) translateZ(-80px); }
-      to { opacity: 1; translate: -50% 0; transform: perspective(700px) rotateX(var(--name-rx, 0deg)) rotateY(var(--name-ry, 0deg)) translateZ(var(--name-z, 0px)); }
+      from { opacity: 0; transform: translate(-50%, 48px) perspective(700px) rotateX(35deg) translateZ(-80px); }
+      to { opacity: 1; transform: translate(-50%, 0) perspective(700px) rotateX(var(--name-rx, 0deg)) rotateY(var(--name-ry, 0deg)) translateZ(var(--name-z, 0px)); }
     }
 
     @keyframes intro-title-arrive {
-      from { opacity: 0; translate: -50% 24px; filter: blur(7px); }
-      to { opacity: 1; translate: -50% 0; filter: blur(0); }
+      from { opacity: 0; transform: translate(-50%, 24px); filter: blur(7px); }
+      to { opacity: 1; transform: translate(-50%, 0); filter: blur(0); }
     }
 
     @keyframes title-light-sweep {
@@ -2392,8 +2391,8 @@
     }
 
     @keyframes intro-tagline-arrive {
-      from { opacity: 0; translate: -50% 12px; }
-      to { opacity: 1; translate: -50% 0; }
+      from { opacity: 0; transform: translate(-50%, 12px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
     }
 
     @keyframes scroll-cue-arrive {
@@ -2440,13 +2439,13 @@
     }
 
     @keyframes voxel-float {
-      from { translate: 0 3px; }
-      to { translate: 0 -9px; }
+      from { transform: translateY(3px); }
+      to { transform: translateY(-9px); }
     }
 
     @keyframes sword-float {
-      from { translate: 0 0; }
-      to { translate: 0 -12px; }
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
     }
 
     @keyframes torch-glow {
@@ -2470,8 +2469,8 @@
     }
 
     @keyframes portrait-float {
-      0%, 100% { translate: 0 0; }
-      50% { translate: 0 -8px; }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
 
     @media (max-width: 760px) {
